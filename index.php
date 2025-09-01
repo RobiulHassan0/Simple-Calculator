@@ -1,32 +1,25 @@
 <?php
-session_start();
+    session_start();
+    require_once "./Calculator.php";
+    
+    $result = "";
 
-$result = "";
+    if($_SERVER['REQUEST_METHOD'] === 'POST'){
+        $num1 = (float) $_POST['number1'];
+        $num2 = (float) $_POST['number2'];
+        $operation = $_POST['operation'];
 
-// POST সাবমিট হ্যান্ডল
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $num1 = (float) $_POST['number1'];
-    $num2 = (float) $_POST['number2'];
-    $operation = $_POST['operation'];
+        $compute = new Calculator();
+        $_SESSION['result'] = $compute->calculate($num1, $num2, $operation);
 
-    $compute = new Calculator();
-    $result = $compute->calculate($num1, $num2, $operation);
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit;
+    }
 
-    // রেজাল্ট SESSION এ সেভ করো (তুমি ডাটা রাখবে না বললে বাদ দিতে পারো)
-    $_SESSION['result'] = $result;
+    $result = $_SESSION['result'] ?? '';
+    unset($_SESSION['result']);
 
-    // রিডাইরেক্ট দাও পেজে (GET রিকোয়েস্ট হবে)
-    header("Location: " . $_SERVER['PHP_SELF']);
-    exit;
-}
-
-// GET রিকোয়েস্টে SESSION থেকে রেজাল্ট নাও
-if (isset($_SESSION['result'])) {
-    $result = $_SESSION['result'];
-    unset($_SESSION['result']); // রেজাল্ট একবার দেখানোর পর মুছে ফেলো
-}
 ?>
-
 
 
 
@@ -100,7 +93,7 @@ if (isset($_SESSION['result'])) {
             <div class="result-box bg-info bg-gradient mt-4 d-flex align-items-center justify-content-between">
                 
                 
-                <p class="bg-primary bg-gradient fw-bold m-0 h-100">Result : </p>
+                <p class="bg-success bg-gradient fw-bold m-0 h-100">Result : </p>
                 
              
                 <h5 class="fw-bold m-0 pe-3 primary"> <?= htmlspecialchars($result) ?></h5>
